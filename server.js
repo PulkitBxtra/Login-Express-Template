@@ -1,8 +1,14 @@
 const express=require("express");
 const app=express();
 const bcrypt = require("bcrypt");
+var bodyParser = require('body-parser')
 
 app.set('view engine', 'ejs');
+
+//had to include this line in order for body parser to work
+// app.use(express.json());
+app.use(express.urlencoded({extended:false}));
+// app.use(bodyparser.json());
 
 const users=[];
 
@@ -14,24 +20,21 @@ app.get('/register',(req,res)=>{
     res.render('register.ejs')
 })
 
-app.post('/register', async (req,res)=>{
-
+app.post('/register', async (req, res) => {
     try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        users.push({
-        //   id: Date.now().toString(),
-          name: req.body.name,
-          email: req.body.email,
-          password: hashedPassword
-        })
-        res.redirect('/login')
-      } catch {
-        res.redirect('/register')
-      }
-
-      console.log(users);
-})
-
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      users.push({
+        id: Date.now().toString(),
+        name: req.body.name,
+        email: req.body.email,
+        password: hashedPassword
+      })
+      res.redirect('/login')
+    } catch {
+      res.redirect('/register')
+    }
+    console.log(users);
+  })
 
 
 app.post('/login',(req,res)=>{
